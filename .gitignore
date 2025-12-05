@@ -1,0 +1,17 @@
+# dependencies (Top-level node_modules)
+/node_modules
+
+# dependencies for ALL sub-directories, including all microservices
+**/node_modules
+
+# Environment variables (CRUCIAL for security!)
+# This ignores all .env files in any directory (e.g., in api-gateway, auth-service, etc.)
+**/.env
+
+# Logs
+npm-debug.log*
+yarn-error.log*
+
+# OS generated files
+.DS_Store
+.idea
