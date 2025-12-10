@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../pages/Navbar';
 import Footer from './Footer';
-import doctorPatientImage from '../assests/HomeIcon.png';
+import doctorPatientImage from '../assets/HomeIcon.png';
 
 export default function Home() {
   const navigate = useNavigate();
