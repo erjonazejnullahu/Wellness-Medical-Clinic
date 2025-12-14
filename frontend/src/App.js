@@ -4,6 +4,7 @@ import RegisterPatient from './components/Auth/RegisterPatient';
 import Login from './components/Auth/Login';
 import CreateDoctor from './components/Doctor/CreateDoctor';
 import Home from './pages/Home';
+import OurStaff from './pages/OurStaff';
 
 function App() {
   const token = localStorage.getItem('token');
@@ -19,6 +20,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<RegisterPatient />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/staff" element={<OurStaff/>} />
         <Route path="/create-doctor" element={
           <PrivateRoute>
             <CreateDoctor />

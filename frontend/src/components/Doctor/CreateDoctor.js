@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { createDoctor } from '../api/auth';
+import { createDoctor } from '../../api/auth';
 
 export default function CreateDoctor() {
   const [form, setForm] = useState({ 
