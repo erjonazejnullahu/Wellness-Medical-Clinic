@@ -17,4 +17,17 @@ router.post('/', async (req, res) => {
   }
 });
 
+// Get all doctors
+router.get('/', async (req, res) => {
+  try {
+    const doctors = await Doctor.findAll({
+      attributes: ['id', 'first_name', 'last_name', 'specialization', 'license_number', 'years_of_experience']
+    });
+    res.json(doctors);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;

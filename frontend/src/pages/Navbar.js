@@ -49,10 +49,13 @@ export default function Navbar({ scrollToSection }) {
             >
               Services
             </button>
+              <Link to="/staff" className="nav-item">
+              Our Staff
+              </Link>
             <button
               onClick={() => scrollToSection("contact")}
               className="text-[#003554] font-medium hover:text-[#3F89A9] transition-colors bg-transparent border-none cursor-pointer"
-            >
+            >      
               Contact
             </button>
           </div>
