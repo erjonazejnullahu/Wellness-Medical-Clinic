@@ -17,12 +17,14 @@ router.post('/', async (req, res) => {
   }
 });
 
-// optional: get patient by user_id
+//Get user by id
 router.get('/user/:user_id', async (req, res) => {
-  const { user_id } = req.params;
-  const p = await Patient.findOne({ where: { user_id }});
-  if (!p) return res.status(404).json({ message: 'Not found' });
-  res.json(p);
+  const patient = await Patient.findOne({
+    where: { user_id: req.params.user_id }
+  });
+
+  if (!patient) return res.status(404).json({ message: 'Not found' });
+  res.json(patient);
 });
 
 module.exports = router;

@@ -78,5 +78,13 @@ router.post('/create-doctor', authMiddleware, adminOnly, async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+// Get logged-in user basic info
+router.get('/me', authMiddleware, async (req, res) => {
+  res.json({
+    id: req.user.id,
+    email: req.user.email,
+    role: req.user.role
+  });
+});
 
 module.exports = router;
