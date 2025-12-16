@@ -57,7 +57,13 @@ export default function Navbar({ scrollToSection }) {
               className="text-[#003554] font-medium hover:text-[#3F89A9] transition-colors bg-transparent border-none cursor-pointer"
             >      
               Contact
-            </button>
+            </button> 
+            <Link
+                to="/aboutus"
+                className="text-[#003554] font-medium hover:text-[#3F89A9] transition-colors"
+              >
+                About Us
+              </Link>
           </div>
 
           <div className="flex space-x-4">
