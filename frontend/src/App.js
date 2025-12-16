@@ -8,11 +8,10 @@ import OurStaff from './pages/OurStaff';
 import AboutUs from './pages/AboutUs';
 
 function App() {
-  const token = localStorage.getItem('token');
 
-  // Optional: simple private route
   const PrivateRoute = ({ children }) => {
-    return token ? children : <Navigate to="/login" />;
+    const token = localStorage.getItem('token');
+    return token ? children : <Navigate to="/login" replace />;
   };
 
   return (
@@ -21,6 +20,16 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<RegisterPatient />} />
         <Route path="/login" element={<Login />} />
+
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute>
+              <Profile />
+            </PrivateRoute>
+          }
+        />
+        
         <Route path="/staff" element={<OurStaff/>} />
         <Route path="/aboutus" element={<AboutUs/>} />
         <Route path="/create-doctor" element={

@@ -5,10 +5,15 @@ import logo from '../assets/logo.png';
 export default function Navbar({ scrollToSection }) {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
+  const [role, setRole] = useState(localStorage.getItem("role") || null); 
 
   useEffect(() => {
     const checkLoginStatus = () => {
-      setIsLoggedIn(!!localStorage.getItem("token"));
+      const token = localStorage.getItem("token");
+      setIsLoggedIn(!!token);
+
+      const savedRole = localStorage.getItem("role"); // 
+      setRole(savedRole);
     };
 
     checkLoginStatus();
@@ -20,6 +25,7 @@ export default function Navbar({ scrollToSection }) {
     localStorage.clear();
     sessionStorage.clear();
     setIsLoggedIn(false);
+    setRole(null); // <- clear role on logout
     navigate("/");
   };
 
@@ -27,46 +33,46 @@ export default function Navbar({ scrollToSection }) {
     <nav className="bg-white shadow-md">
       <div className="container mx-auto px-6 py-4">
         <div className="flex justify-between items-center">
-           <div className="h-10 w-48 flex items-center">
+          <div className="h-10 w-48 flex items-center">
             <img 
               src={logo} 
               alt="Wellness Medical Logo" 
-              className="h-full w-auto object-contain" /* Fills container but maintains aspect ratio */
+              className="h-full w-auto object-contain"
             />
           </div>
 
-
           <div className="hidden md:flex space-x-8">
-            <button
-              onClick={() => scrollToSection("home")}
-              className="text-[#003554] font-medium hover:text-[#3F89A9] transition-colors bg-transparent border-none cursor-pointer"
-            >
-              Home
-            </button>
-            <button
-              onClick={() => scrollToSection("services")}
-              className="text-[#003554] font-medium hover:text-[#3F89A9] transition-colors bg-transparent border-none cursor-pointer"
-            >
-              Services
-            </button>
-              <Link to="/staff" className="nav-item">
-              Our Staff
+            <Link
+                to="/"
+                className="text-[#003554] font-medium hover:text-[#3F89A9] transition-colors"
+              >
+                Home
               </Link>
-            <button
-              onClick={() => scrollToSection("contact")}
-              className="text-[#003554] font-medium hover:text-[#3F89A9] transition-colors bg-transparent border-none cursor-pointer"
-            >      
-              Contact
-            </button> 
+            <Link
+                to="/staff"
+                className="text-[#003554] font-medium hover:text-[#3F89A9] transition-colors"
+              >
+                Our Staff
+              </Link>
             <Link
                 to="/aboutus"
                 className="text-[#003554] font-medium hover:text-[#3F89A9] transition-colors"
               >
                 About Us
               </Link>
+
+
+            {isLoggedIn && (
+              <Link
+                to="/profile"
+                className="text-[#003554] font-medium hover:text-[#3F89A9] transition-colors"
+              >
+                Profile
+              </Link>
+            )}
           </div>
 
-          <div className="flex space-x-4">
+          <div className="flex space-x-4 items-center">
             {isLoggedIn ? (
               <button
                 onClick={handleLogout}
@@ -82,6 +88,7 @@ export default function Navbar({ scrollToSection }) {
                 >
                   Login
                 </Link>
+
                 <Link
                   to="/register"
                   className="px-6 py-2 bg-gradient-to-r from-[#3D9DA4] to-[#3F89A9] text-white font-medium rounded-lg hover:opacity-90 transition-opacity shadow-md"

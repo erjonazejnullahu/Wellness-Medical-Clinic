@@ -11,6 +11,11 @@ export default function OurStaff() {
   const [specializations, setSpecializations] = useState([]);
   const [selectedSpecialization, setSelectedSpecialization] = useState('all');
 
+    const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) element.scrollIntoView({ behavior: 'smooth' });
+  };
+
   // Fetch doctors data
   useEffect(() => {
     const fetchDoctors = async () => {
@@ -89,7 +94,7 @@ export default function OurStaff() {
 
   return (
       <>
-    <Navbar />
+      <Navbar scrollToSection={scrollToSection} />
     <div className="min-h-screen bg-gradient-to-b from-white to-[#67B99A]/10">
       {/* Hero Banner */}
       <section className="bg-[#3F89A9] text-white py-16">
@@ -250,7 +255,7 @@ export default function OurStaff() {
         </div>
       </section>
     </div>
-     <Footer />
-  </>
+   <Footer scrollToSection={scrollToSection} />
+     </>
   );
 }

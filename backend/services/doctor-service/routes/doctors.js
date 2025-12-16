@@ -30,4 +30,15 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Get doctor by user_id
+router.get('/user/:user_id', async (req, res) => {
+  const doctor = await Doctor.findOne({
+    where: { user_id: req.params.user_id }
+  });
+
+  if (!doctor) return res.status(404).json({ message: 'Not found' });
+  res.json(doctor);
+});
+
+
 module.exports = router;
