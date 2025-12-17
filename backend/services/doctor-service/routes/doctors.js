@@ -1,4 +1,5 @@
 const express = require('express');
+const axios = require('axios');
 const { Doctor } = require('../models');
 
 const router = express.Router();
@@ -40,5 +41,42 @@ router.get('/user/:user_id', async (req, res) => {
   res.json(doctor);
 });
 
+// Get doctors with availability
+router.get('/availability', async (req, res) => {
+  try {
+    let { date, time } = req.query;
+    if (!date || !time) return res.status(400).json({ message: 'Missing date or time' });
+    if (time.length === 5) time = `${time}:00`;
+
+    const doctors = await Doctor.findAll();
+    const appointmentServiceUrl = 'http://localhost:5003/api/appointments';
+
+    const results = [];
+
+    for (const doc of doctors) {
+      let available = true;
+      try {
+        const conflictRes = await axios.get(
+          `${appointmentServiceUrl}/doctor-conflict`,
+          { params: { doctor_user_id: doc.user_id, date, time } }
+        );
+        available = !conflictRes.data.conflict;
+      } catch (err) {
+        console.error(`Conflict check failed for doctor ${doc.user_id}:`, err.message);
+        available = false;
+      }
+
+      results.push({
+        ...doc.toJSON(),
+        available
+      });
+    }
+
+    res.json(results);
+  } catch (err) {
+    console.error('Doctor availability error:', err.message);
+    res.status(500).json({ message: 'Failed to fetch doctor availability' });
+  }
+});
 
 module.exports = router;
