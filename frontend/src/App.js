@@ -7,6 +7,7 @@ import Home from './pages/Home';
 import OurStaff from './pages/OurStaff';
 import Profile from './pages/Profile';
 import BookAppointment from './components/Appointment/BookAppointment';
+import DoctorAppointments from './components/Doctor/DoctorAppointments';
 import AboutUs from './pages/AboutUs';
 
 function App() {
@@ -48,6 +49,15 @@ function App() {
           </PrivateRoute>
         }
       />
+        <Route
+        path="/doctor/appointments"
+        element={
+          <PrivateRoute>
+            <DoctorAppointments />
+          </PrivateRoute>
+        }
+      />
+    
       </Routes>
     </Router>
   );
