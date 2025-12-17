@@ -18,6 +18,8 @@ export default function Login() {
 
     if (res.token) {
       localStorage.setItem('token', res.token);
+      localStorage.setItem('role', res.user.role);
+      console.log('Logged in with role:', res.user.role);
       setMessage('Logged in successfully!');
       navigate('/');
     } else {

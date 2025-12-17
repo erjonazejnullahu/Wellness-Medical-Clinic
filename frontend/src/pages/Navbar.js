@@ -6,13 +6,19 @@ export default function Navbar({ scrollToSection }) {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
   const [role, setRole] = useState(localStorage.getItem("role") || null); 
+  
+  const isDoctor =
+  role &&
+  (role.toUpperCase() === 'DOCTOR' ||
+   role.toUpperCase() === 'ROLE_DOCTOR');
 
-  useEffect(() => {
+
+   useEffect(() => {
     const checkLoginStatus = () => {
       const token = localStorage.getItem("token");
       setIsLoggedIn(!!token);
 
-      const savedRole = localStorage.getItem("role"); // 
+      const savedRole = localStorage.getItem("role"); 
       setRole(savedRole);
     };
 
@@ -61,6 +67,14 @@ export default function Navbar({ scrollToSection }) {
                 About Us
               </Link>
 
+            {isDoctor && (
+              <Link
+                to="/doctor/appointments"
+                className="text-[#0077B6] font-medium hover:text-[#0096c7]"
+              >
+                Doctor Dashboard
+              </Link>
+            )}
 
             {isLoggedIn && (
               <Link
