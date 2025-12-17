@@ -59,7 +59,7 @@ export default function Home() {
             </p>
             <div className="flex flex-col sm:flex-row gap-6">
               <button
-                onClick={() => navigate('/register')}
+                onClick={() => navigate('/book-appointment')}
                 className="px-8 py-4 bg-gradient-to-r from-[#3D9DA4] to-[#3F89A9] text-white font-semibold rounded-lg hover:shadow-xl transition-shadow text-lg shadow-lg"
               >
                 Book Appointment

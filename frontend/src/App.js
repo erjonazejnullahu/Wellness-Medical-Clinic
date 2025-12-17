@@ -5,6 +5,8 @@ import Login from './components/Auth/Login';
 import CreateDoctor from './components/Doctor/CreateDoctor';
 import Home from './pages/Home';
 import OurStaff from './pages/OurStaff';
+import Profile from './pages/Profile';
+import BookAppointment from './components/Appointment/BookAppointment';
 import AboutUs from './pages/AboutUs';
 
 function App() {
@@ -37,6 +39,15 @@ function App() {
             <CreateDoctor />
           </PrivateRoute>
         } />
+
+        <Route
+        path="/book-appointment"
+        element={
+          <PrivateRoute>
+            <BookAppointment />
+          </PrivateRoute>
+        }
+      />
       </Routes>
     </Router>
   );
