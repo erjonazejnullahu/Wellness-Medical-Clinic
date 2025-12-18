@@ -9,6 +9,7 @@ import Profile from './pages/Profile';
 import BookAppointment from './components/Appointment/BookAppointment';
 import DoctorAppointments from './components/Doctor/DoctorAppointments';
 import AboutUs from './pages/AboutUs';
+import AdminPanel from './pages/AdminPanel';
 
 function App() {
 
@@ -23,6 +24,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<RegisterPatient />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/adminpanel" element={<AdminPanel />} />
 
         <Route
           path="/profile"
