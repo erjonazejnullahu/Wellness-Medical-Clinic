@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { createDoctor } from '../../api/auth';
+import { useNavigate } from 'react-router-dom';
 
 export default function CreateDoctor() {
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({ 
     email: '', 
     password: '', 
@@ -26,7 +29,6 @@ export default function CreateDoctor() {
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     
-    // --- Validation Logic: Make ALL fields required and check email format ---
     const requiredFields = [
       'email', 
       'password', 
@@ -48,8 +50,8 @@ export default function CreateDoctor() {
     });
     
     if (form.email && !emailRegex.test(form.email)) {
-        newErrors.email = 'format';
-        isValid = false;
+      newErrors.email = 'format';
+      isValid = false;
     }
 
     setErrors(newErrors);
@@ -64,10 +66,8 @@ export default function CreateDoctor() {
     const token = localStorage.getItem('token');
     const res = await createDoctor(form, token);
     
-    // FIXED: Check for different possible success messages
     const successMessages = ['successfully', 'doctor created', 'created successfully', 'created', 'success'];
     
-    // Check if any success keyword exists in the response
     const responseMessage = res.message || JSON.stringify(res) || '';
     const isSuccess = successMessages.some(keyword => 
       responseMessage.toLowerCase().includes(keyword)
@@ -75,6 +75,9 @@ export default function CreateDoctor() {
     
     if(isSuccess){
       setMessage('Doctor account created successfully!');
+      setTimeout(() => {
+        navigate('/doctors-dashboard');
+      }, 1000);
     } else {
       setMessage(responseMessage);
     }
@@ -92,14 +95,17 @@ export default function CreateDoctor() {
       <div className="w-full max-w-2xl">
         <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
           <div className="bg-gradient-to-r from-[#003554] to-[#13315C] p-6">
-            <h2 className="text-2xl font-bold text-white text-center">Create Doctor Account (Admin)</h2>
-            <p className="text-[#99C5FF] text-center mt-2">Enter the details for the new doctor</p>
+            <h2 className="text-2xl font-bold text-white text-center">
+              Create Doctor Account (Admin)
+            </h2>
+            <p className="text-[#99C5FF] text-center mt-2">
+              Enter the details for the new doctor
+            </p>
           </div>
           
           <div className="p-8">
             <form onSubmit={submit} className="space-y-6">
               
-              {/* Row 1: First Name & Last Name */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-[#13315C] font-medium mb-2">First Name</label>
@@ -124,7 +130,6 @@ export default function CreateDoctor() {
                 </div>
               </div>
 
-              {/* Row 2: Email & Password */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-[#13315C] font-medium mb-2">Email Address</label>
@@ -151,7 +156,6 @@ export default function CreateDoctor() {
                 </div>
               </div>
               
-              {/* Row 3: Specialization & License Number */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-[#13315C] font-medium mb-2">Specialization</label>
@@ -176,17 +180,16 @@ export default function CreateDoctor() {
                 </div>
               </div>
 
-              {/* Row 4: Years of Experience */}
               <div>
-                  <label className="block text-[#13315C] font-medium mb-2">Years of Experience</label>
-                  <input 
-                    name="years_of_experience" 
-                    type="number" 
-                    onChange={onChange} 
-                    placeholder="Enter years of experience" 
-                    className={inputClass('years_of_experience')}
-                  />
-                  {errors.years_of_experience && <p className="text-red-500 text-sm mt-1">Years of Experience is required (must be 0 or more).</p>}
+                <label className="block text-[#13315C] font-medium mb-2">Years of Experience</label>
+                <input 
+                  name="years_of_experience" 
+                  type="number" 
+                  onChange={onChange} 
+                  placeholder="Enter years of experience" 
+                  className={inputClass('years_of_experience')}
+                />
+                {errors.years_of_experience && <p className="text-red-500 text-sm mt-1">Years of Experience is required (must be 0 or more).</p>}
               </div>
 
               <div className="pt-4">
@@ -199,10 +202,14 @@ export default function CreateDoctor() {
               </div>
             </form>
             
-            {/* FIXED: Now checks for multiple success keywords */}
             {message && (
-              <div className={`mt-6 p-4 rounded-lg text-center ${message.toLowerCase().includes('successfully') || message.toLowerCase().includes('doctor created') || message.toLowerCase().includes('created successfully') ? 
-              'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
+              <div className={`mt-6 p-4 rounded-lg text-center ${
+                message.toLowerCase().includes('successfully') || 
+                message.toLowerCase().includes('doctor created') || 
+                message.toLowerCase().includes('created successfully')
+                  ? 'bg-green-50 text-green-700 border border-green-200'
+                  : 'bg-red-50 text-red-700 border border-red-200'
+              }`}>
                 <p className="font-medium">{message}</p>
               </div>
             )}

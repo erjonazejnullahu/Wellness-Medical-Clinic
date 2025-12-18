@@ -1,68 +1,79 @@
-// Get all doctors
-router.get('/', async (req, res) => {
+// frontend/src/api/doctorApi.js
+
+const API_BASE_URL = 'http://localhost:4000'; // API Gateway URL
+
+export const fetchDoctors = async () => {
   try {
-    const doctors = await Doctor.findAll({
-      attributes: ['id', 'first_name', 'last_name', 'specialization', 'license_number', 'years_of_experience']
+    // Note: The /doctors path is automatically routed by the API Gateway
+    const response = await fetch(`${API_BASE_URL}/doctors`);
+
+    if (!response.ok) {
+      // Handle HTTP errors
+      const errorText = await response.text();
+      throw new Error(`Failed to fetch doctors: ${response.status} - ${errorText}`);
+    }
+
+    const doctors = await response.json();
+    return doctors;
+  } catch (error) {
+    console.error("Error fetching doctors:", error);
+    // You might want to throw the error or return an empty array/null
+    throw error;
+  }
+};
+
+export const fetchDoctorById = async (id) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/doctors/${id}`);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to fetch doctor: ${response.status} - ${errorText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching doctor:", error);
+    throw error;
+  }
+};
+
+export const updateDoctor = async (id, doctorData) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/doctors/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(doctorData)
     });
-    res.json(doctors);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: err.message });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to update doctor: ${response.status} - ${errorText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error updating doctor:", error);
+    throw error;
   }
-});
+};
 
-module.exports = router;
-
-// Get doctor by ID
-router.get('/:id', async (req, res) => {
+export const deleteDoctor = async (id) => {
   try {
-    const doctor = await Doctor.findByPk(req.params.id);
-    if (!doctor) return res.status(404).json({ message: 'Doctor not found' });
-
-    res.json(doctor);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: err.message });
-  }
-});
-
-router.put('/:id', async (req, res) => {
-  try {
-    const doctor = await Doctor.findByPk(req.params.id);
-    if (!doctor) return res.status(404).json({ message: 'Doctor not found' });
-
-    const {
-      first_name,
-      last_name,
-      specialization,
-      license_number,
-      years_of_experience
-    } = req.body;
-
-    await doctor.update({
-      first_name,
-      last_name,
-      specialization,
-      license_number,
-      years_of_experience
+    const response = await fetch(`${API_BASE_URL}/doctors/${id}`, {
+      method: 'DELETE'
     });
 
-    res.json({ message: 'Doctor updated successfully', doctor });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: err.message });
-  }
-});
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to delete doctor: ${response.status} - ${errorText}`);
+    }
 
-router.delete('/:id', async (req, res) => {
-  try {
-    const doctor = await Doctor.findByPk(req.params.id);
-    if (!doctor) return res.status(404).json({ message: 'Doctor not found' });
-
-    await doctor.destroy();
-    res.json({ message: 'Doctor deleted successfully' });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: err.message });
+    return await response.json();
+  } catch (error) {
+    console.error("Error deleting doctor:", error);
+    throw error;
   }
-});
+};

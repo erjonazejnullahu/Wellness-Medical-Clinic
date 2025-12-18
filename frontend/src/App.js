@@ -11,6 +11,7 @@ import DoctorAppointments from './components/Doctor/DoctorAppointments';
 import AboutUs from './pages/AboutUs';
 import AdminPanel from './pages/AdminPanel';
 import Inventory from './pages/Inventory';
+import DoctorsDashboard from './pages/DoctorsDashboard';
 
 function App() {
 
@@ -41,6 +42,15 @@ function App() {
             </PrivateRoute>
           }
         />
+         <Route
+          path="/doctors-dashboard"
+          element={
+            <PrivateRoute>
+              <DoctorsDashboard />
+            </PrivateRoute>
+          }
+        />
+
 
 
         <Route
