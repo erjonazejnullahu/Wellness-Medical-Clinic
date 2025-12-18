@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { createDoctor } from '../../api/auth';
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../../pages/Navbar';
+import Footer from '../../pages/Footer';
+
 
 export default function CreateDoctor() {
   const navigate = useNavigate();
@@ -89,8 +92,15 @@ export default function CreateDoctor() {
         ? 'border-red-500 focus:border-red-500' 
         : 'border-gray-200 focus:border-[#3D9DA4]'
     }`;
+    
+    const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) element.scrollIntoView({ behavior: 'smooth' });
+  };
 
   return (
+    <>
+      <Navbar scrollToSection={scrollToSection} />
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#99C5FF] to-[#3F89A9] p-4">
       <div className="w-full max-w-2xl">
         <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
@@ -217,5 +227,7 @@ export default function CreateDoctor() {
         </div>
       </div>
     </div>
+    <Footer scrollToSection={scrollToSection} />
+     </>
   );
 }

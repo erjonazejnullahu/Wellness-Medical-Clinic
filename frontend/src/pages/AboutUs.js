@@ -1,8 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Navbar from './Navbar';
+import Footer from './Footer';
 
+const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) element.scrollIntoView({ behavior: 'smooth' });
+  };
 const AboutUs = () => {
   return (
+    <>
+      <Navbar scrollToSection={scrollToSection} />
     <section className="bg-gradient-to-b from-white to-[#99C5FF]/10 py-20">
       <div className="container mx-auto px-6">
         <div className="max-w-6xl mx-auto">
@@ -142,6 +150,8 @@ const AboutUs = () => {
         </div>
       </div>
     </section>
+    <Footer scrollToSection={scrollToSection} />
+     </>
   );
 };
 
