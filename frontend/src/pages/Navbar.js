@@ -12,6 +12,11 @@ export default function Navbar({ scrollToSection }) {
   (role.toUpperCase() === 'DOCTOR' ||
    role.toUpperCase() === 'ROLE_DOCTOR');
 
+  const isAdmin =
+  role &&
+  (role.toUpperCase() === 'ADMIN' ||
+   role.toUpperCase() === 'ROLE_ADMIN');
+
 
    useEffect(() => {
     const checkLoginStatus = () => {
@@ -70,9 +75,18 @@ export default function Navbar({ scrollToSection }) {
             {isDoctor && (
               <Link
                 to="/doctor/appointments"
-                className="text-[#0077B6] font-medium hover:text-[#0096c7]"
+                className="bg-[#3D9DA4] text-white font-medium rounded-lg hover:bg-[#024959] transition-colors px-3 py-0.5"
               >
                 Doctor Dashboard
+              </Link>
+            )}
+
+            {isAdmin && (
+              <Link
+                to="/adminpanel"
+                className="bg-[#003554] text-white font-medium rounded-lg hover:bg-[#3F89A9] transition-colors px-3 py-0.5"
+                >
+                Admin Panel
               </Link>
             )}
 
