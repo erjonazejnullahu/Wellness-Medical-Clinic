@@ -25,8 +25,22 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<RegisterPatient />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/adminpanel" element={<AdminPanel />} />
-        <Route path="/inventory" element={<Inventory />} />
+          <Route
+          path="/adminpanel"
+          element={
+            <PrivateRoute>
+              <AdminPanel />
+            </PrivateRoute>
+          }
+        />
+     <Route
+          path="/inventory"
+          element={
+            <PrivateRoute>
+              <Inventory />
+            </PrivateRoute>
+          }
+        />
 
 
         <Route

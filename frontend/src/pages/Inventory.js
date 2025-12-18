@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import Navbar from '../pages/Navbar';
+import Footer from './Footer';
 import axios from 'axios';
 
 const Inventory = () => {
@@ -17,8 +19,16 @@ const Inventory = () => {
     description: ''
   });
 
+   const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   // API base URL
-  const API_URL = '/api/medicines';
+  // To this (or whatever port your backend is running on):
+const API_URL = 'http://localhost:5005/api/medicines';
 
   // Fetch medicines from backend
   const fetchMedicines = async () => {
@@ -50,65 +60,89 @@ const Inventory = () => {
   };
 
   // Submit form (add or update medicine)
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  // DEBUGGING: Add this to see what's being sent
+  console.log('DEBUG - Form data being sent:', formData);
+  console.log('DEBUG - expiry_date value:', formData.expiry_date);
+  console.log('DEBUG - Type of expiry_date:', typeof formData.expiry_date);
+  
+  try {
+    // Validate required fields
+    if (!formData.name || !formData.quantity || !formData.expiry_date || !formData.price) {
+      alert('Please fill all required fields');
+      return;
+    }
+
+    if (editingId) {
+      // Update existing medicine
+      const response = await axios.put(`${API_URL}/${editingId}`, formData);
+      alert(response.data.message || 'Medicine updated successfully!');
+    } else {
+      // Add new medicine
+      const response = await axios.post(API_URL, formData);
+      alert(response.data.message || 'Medicine added successfully!');
+    }
     
-    try {
-      // Validate required fields
-      if (!formData.name || !formData.quantity || !formData.expiry_date || !formData.price) {
-        alert('Please fill all required fields');
-        return;
-      }
+    // Reset form
+    resetForm();
+    
+    // Refresh medicines list
+    fetchMedicines();
+    
+  } catch (err) {
+    console.error('Error saving medicine:', err);
+    console.error('Full error response:', err.response);
+    alert('Error: ' + (err.response?.data?.error || err.message));
+  }
+};
 
-      if (editingId) {
-        // Update existing medicine
-        const response = await axios.put(`${API_URL}/${editingId}`, formData);
-        alert(response.data.message || 'Medicine updated successfully!');
-      } else {
-        // Add new medicine
-        const response = await axios.post(API_URL, formData);
-        alert(response.data.message || 'Medicine added successfully!');
-      }
-      
-      // Reset form
-      resetForm();
-      
-      // Refresh medicines list
-      fetchMedicines();
-      
-    } catch (err) {
-      console.error('Error saving medicine:', err);
-      alert('Error: ' + (err.response?.data?.error || err.message));
-    }
-  };
 
-  // Edit medicine
-  const handleEdit = (medicine) => {
-    setEditingId(medicine.id);
-    setFormData({
-      name: medicine.name,
-      quantity: medicine.quantity,
-      expiry_date: medicine.expiry_date.split('T')[0], // Format date for input
-      price: medicine.price,
-      description: medicine.description || ''
-    });
-    setShowForm(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  // Delete medicine
-  const handleDelete = async (id, name) => {
-    if (window.confirm(`Are you sure you want to delete "${name}"?`)) {
+// Edit medicine - FIXED VERSION
+const handleEdit = (medicine) => {
+  console.log('DEBUG - Editing medicine:', medicine);
+  console.log('DEBUG - medicine.expiry_date:', medicine.expiry_date);
+  
+  setEditingId(medicine.id);
+  
+  // Get the expiry date properly
+  let expiryDateValue = '';
+  if (medicine.expiry_date) {
+    // Check if it's already in YYYY-MM-DD format
+    if (typeof medicine.expiry_date === 'string' && medicine.expiry_date.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      expiryDateValue = medicine.expiry_date;
+    } else if (typeof medicine.expiry_date === 'string' && medicine.expiry_date.includes('T')) {
+      // If it has 'T' (ISO format), split it
+      expiryDateValue = medicine.expiry_date.split('T')[0];
+    } else {
+      // Try to parse it as a date
       try {
-        await axios.delete(`${API_URL}/${id}`);
-        alert('Medicine deleted successfully!');
-        fetchMedicines();
-      } catch (err) {
-        console.error('Error deleting medicine:', err);
-        alert('Error deleting medicine: ' + (err.response?.data?.error || err.message));
+        const date = new Date(medicine.expiry_date);
+        if (!isNaN(date.getTime())) {
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          expiryDateValue = `${year}-${month}-${day}`;
+        }
+      } catch (error) {
+        console.error('Error parsing date:', error);
       }
     }
-  };
+  }
+  
+  console.log('DEBUG - Parsed expiry_date:', expiryDateValue);
+  
+  setFormData({
+    name: medicine.name,
+    quantity: medicine.quantity,
+    expiry_date: expiryDateValue,
+    price: medicine.price,
+    description: medicine.description || ''
+  });
+  setShowForm(true);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
 
   // Reset form
   const resetForm = () => {
@@ -123,12 +157,44 @@ const Inventory = () => {
     setShowForm(false);
   };
 
-  // Format date
-  const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
+  // Delete medicine
+const handleDelete = async (id, name) => {
+  if (window.confirm(`Are you sure you want to delete "${name}"?`)) {
+    try {
+      await axios.delete(`${API_URL}/${id}`);
+      alert('Medicine deleted successfully!');
+      fetchMedicines();
+    } catch (err) {
+      console.error('Error deleting medicine:', err);
+      alert('Error deleting medicine: ' + (err.response?.data?.error || err.message));
+    }
+  }
+};
+
+  // Format date - UPDATED
+const formatDate = (dateString) => {
+  if (!dateString) return 'N/A';
+  
+  console.log('DEBUG - formatDate input:', dateString);
+  
+  try {
+    // If it's already in YYYY-MM-DD format
+    if (typeof dateString === 'string' && dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      const [year, month, day] = dateString.split('-');
+      return `${day}/${month}/${year}`;
+    }
+    
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      return 'Invalid Date';
+    }
+    
     return date.toLocaleDateString('en-GB');
-  };
+  } catch (error) {
+    console.error('Error formatting date:', error);
+    return 'N/A';
+  }
+};
 
   // Get expiry status
   const getExpiryStatus = (expiryDate) => {
@@ -170,9 +236,9 @@ const Inventory = () => {
   }
 
   return (
+    <>
+      <Navbar scrollToSection={scrollToSection} />
     <div className="min-h-screen bg-[#FAFDFF] p-4 md:p-8">
-          {/* Navbar*/}
-              <Navbar scrollToSection={scrollToSection} />
       <div className="max-w-7xl mx-auto">
         
         {/* Header - Updated (teksti i hequr) */}
@@ -466,13 +532,14 @@ const Inventory = () => {
 
         {/* Footer note */}
         <div className="mt-8 text-center text-gray-500 text-sm">
-          <p>💊 Inventory updated in real-time • All data stored securely in MySQL</p>
+          <p>💊 Inventory updated in real-time</p>
         </div>
 
       </div>
-      {/* Footer*/}
-          <Footer scrollToSection={scrollToSection} />
     </div>
+
+    <Footer scrollToSection={scrollToSection} />
+     </>
     
   );
 };
