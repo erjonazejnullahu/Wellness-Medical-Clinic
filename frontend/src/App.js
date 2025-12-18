@@ -10,6 +10,7 @@ import BookAppointment from './components/Appointment/BookAppointment';
 import DoctorAppointments from './components/Doctor/DoctorAppointments';
 import AboutUs from './pages/AboutUs';
 import AdminPanel from './pages/AdminPanel';
+import Inventory from './pages/Inventory';
 
 function App() {
 
@@ -25,6 +26,8 @@ function App() {
         <Route path="/register" element={<RegisterPatient />} />
         <Route path="/login" element={<Login />} />
         <Route path="/adminpanel" element={<AdminPanel />} />
+        <Route path="/inventory" element={<Inventory />} />
+
 
         <Route
           path="/profile"

@@ -171,6 +171,8 @@ const Inventory = () => {
 
   return (
     <div className="min-h-screen bg-[#FAFDFF] p-4 md:p-8">
+          {/* Navbar*/}
+              <Navbar scrollToSection={scrollToSection} />
       <div className="max-w-7xl mx-auto">
         
         {/* Header - Updated (teksti i hequr) */}
@@ -468,7 +470,10 @@ const Inventory = () => {
         </div>
 
       </div>
+      {/* Footer*/}
+          <Footer scrollToSection={scrollToSection} />
     </div>
+    
   );
 };
 

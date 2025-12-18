@@ -55,7 +55,7 @@ export default function AdminPanel() {
       description: "Track medications, supplies, and inventory levels",
       icon: "💊",
       buttonText: "Manage Inventory",
-      path: "/inventory-dashboard",
+      path: "/inventory",
       gradient: "from-[#3D9DA4] to-[#3F89A9]"
     },
     {
