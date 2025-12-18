@@ -95,6 +95,23 @@ router.get('/doctor-conflict', async (req, res) => {
 
   res.json({ conflict: !!conflict });
 });
+//Get appintment by id
+router.get('/:id', auth, async (req, res) => {
+  const appointment = await Appointment.findByPk(req.params.id);
 
+  if (!appointment) {
+    return res.status(404).json({ message: 'Appointment not found' });
+  }
+
+  // Allow only doctor or patient involved
+  if (
+    appointment.doctor_user_id !== req.user.id &&
+    appointment.patient_user_id !== req.user.id
+  ) {
+    return res.status(403).json({ message: 'Access denied' });
+  }
+
+  res.json(appointment);
+});
 
 module.exports = router;

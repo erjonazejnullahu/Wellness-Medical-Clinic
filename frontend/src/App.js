@@ -12,6 +12,7 @@ import AboutUs from './pages/AboutUs';
 import AdminPanel from './pages/AdminPanel';
 import Inventory from './pages/Inventory';
 import DoctorsDashboard from './pages/DoctorsDashboard';
+import MedicalRecordPage from './components/MedicalRecord/MedicalRecordPage';
 
 function App() {
 
@@ -64,6 +65,7 @@ function App() {
         
         <Route path="/staff" element={<OurStaff/>} />
         <Route path="/aboutus" element={<AboutUs/>} />
+        <Route path="/medical-record/:appointmentId" element={<MedicalRecordPage />} />
         <Route path="/create-doctor" element={
           <PrivateRoute>
             <CreateDoctor />
