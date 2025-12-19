@@ -239,21 +239,6 @@ export default function OurStaff() {
           </>
         )}
       </section>
-
-      {/* CTA Section */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="bg-gradient-to-r from-[#3F89A9] to-[#3F89A9] rounded-3xl p-12 text-center text-white">
-            <h2 className="text-4xl font-bold mb-6">Need to Schedule an Appointment?</h2>
-            <p className="text-xl mb-8 max-w-2xl mx-auto">
-              Book a consultation with any of our qualified healthcare professionals today.
-            </p>
-            <button className="px-8 py-4 bg-white text-[#003554] font-bold rounded-lg hover:bg-gray-100 transition-colors text-lg">
-              Book Appointment Now
-            </button>
-          </div>
-        </div>
-      </section>
     </div>
    <Footer scrollToSection={scrollToSection} />
      </>

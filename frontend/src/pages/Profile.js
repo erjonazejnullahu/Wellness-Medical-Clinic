@@ -268,7 +268,7 @@ export default function Profile() {
                   
                   {user.role === 'PATIENT' && (
                     <button
-                      onClick={() => navigate('/appointments')}
+                      onClick={() => navigate('/patient/appointments')}
                       className="px-6 py-3 bg-gradient-to-r from-[#3D9DA4] to-[#3F89A9] text-white font-medium rounded-lg hover:opacity-90 transition-opacity"
                     >
                       View Appointments
@@ -277,44 +277,15 @@ export default function Profile() {
                   
                   {user.role === 'DOCTOR' && (
                     <button
-                      onClick={() => navigate('/doctor/dashboard')}
+                      onClick={() => navigate('/doctor/appointments')}
                       className="px-6 py-3 bg-gradient-to-r from-[#3D9DA4] to-[#3F89A9] text-white font-medium rounded-lg hover:opacity-90 transition-opacity"
                     >
                       Doctor Dashboard
                     </button>
                   )}
                   
-                  {user.role === 'ADMIN' && (
-                    <button
-                      onClick={() => navigate('/admin/dashboard')}
-                      className="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-medium rounded-lg hover:opacity-90 transition-opacity"
-                    >
-                      Admin Dashboard
-                    </button>
-                  )}
                 </div>
               </div>
-            </div>
-          </div>
-
-          {/* Quick Stats Section */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-2xl border border-blue-200">
-              <div className="text-3xl font-bold text-[#003554]">0</div>
-              <div className="text-blue-700 font-medium">Appointments</div>
-              <div className="text-sm text-gray-600 mt-2">Scheduled visits</div>
-            </div>
-            
-            <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-2xl border border-green-200">
-              <div className="text-3xl font-bold text-[#003554]">0</div>
-              <div className="text-green-700 font-medium">Medical Records</div>
-              <div className="text-sm text-gray-600 mt-2">Health documents</div>
-            </div>
-            
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-2xl border border-purple-200">
-              <div className="text-3xl font-bold text-[#003554]">--</div>
-              <div className="text-purple-700 font-medium">Last Visit</div>
-              <div className="text-sm text-gray-600 mt-2">Most recent appointment</div>
             </div>
           </div>
         </div>

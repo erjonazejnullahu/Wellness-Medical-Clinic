@@ -15,6 +15,7 @@ import DoctorsDashboard from './pages/DoctorsDashboard';
 import MedicalRecordPage from './components/MedicalRecord/MedicalRecordPage';
 import PatientDashboard from './components/Patient/PatientDashboard';
 import EditPatient from './components/Patient/EditPatient';
+import PatientAppointments from './components/Patient/PatientAppointments';
 
 
 function App() {
@@ -77,8 +78,11 @@ function App() {
               <Profile />
             </PrivateRoute>
           }
+          />
+          <Route
+          path="/patient/appointments"
+          element={<PatientAppointments />}
         />
-        
         <Route path="/staff" element={<OurStaff/>} />
         <Route path="/aboutus" element={<AboutUs/>} />
         <Route path="/medical-record/:appointmentId" element={<MedicalRecordPage />} />
