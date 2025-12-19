@@ -1,5 +1,6 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
+const axios = require('axios');
 const { Appointment } = require('../models');
 
 const router = express.Router();
@@ -21,7 +22,6 @@ function auth(req, res, next) {
 router.post('/', auth, async (req, res) => {
   const { doctor_user_id, appointment_date, appointment_time, reason, notes } = req.body;
 
-  // Check availability
   const conflict = await Appointment.findOne({
     where: {
       doctor_user_id,
@@ -47,19 +47,52 @@ router.post('/', auth, async (req, res) => {
   res.status(201).json(appt);
 });
 
-/* 2️⃣ Patient: My appointments */
+/* 2️⃣ PATIENT: My appointments (WITH DOCTOR NAME) */
 router.get('/patient', auth, async (req, res) => {
-  const list = await Appointment.findAll({
-    where: { patient_user_id: req.user.id }
-  });
-  res.json(list);
+  try {
+    if (req.user.role !== 'PATIENT') {
+      return res.status(403).json({ message: 'Access denied' });
+    }
+
+    const appointments = await Appointment.findAll({
+      where: { patient_user_id: req.user.id },
+      order: [
+        ['appointment_date', 'DESC'],
+        ['appointment_time', 'DESC']
+      ]
+    });
+
+   
+    for (let apt of appointments) {
+      try {
+        const doctorRes = await axios.get(
+          `http://localhost:5002/api/doctors/user/${apt.doctor_user_id}`
+        );
+
+        apt.dataValues.doctor_name =
+          `${doctorRes.data.first_name} ${doctorRes.data.last_name}`;
+      } catch {
+        apt.dataValues.doctor_name = 'Unknown Doctor';
+      }
+    }
+
+    res.json(appointments);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Failed to fetch appointments' });
+  }
 });
 
-/* 3️⃣ Doctor: Appointments */
+/* 3️⃣ DOCTOR: Appointments */
 router.get('/doctor', auth, async (req, res) => {
+  if (req.user.role !== 'DOCTOR') {
+    return res.status(403).json({ message: 'Access denied' });
+  }
+
   const list = await Appointment.findAll({
     where: { doctor_user_id: req.user.id }
   });
+
   res.json(list);
 });
 
@@ -81,6 +114,7 @@ router.put('/:id/complete', auth, async (req, res) => {
   res.json({ message: 'Completed' });
 });
 
+/* 6️⃣ Availability check */
 router.get('/doctor-conflict', async (req, res) => {
   const { doctor_user_id, date, time } = req.query;
 
@@ -95,6 +129,7 @@ router.get('/doctor-conflict', async (req, res) => {
 
   res.json({ conflict: !!conflict });
 });
+
 //Get appintment by id
 router.get('/:id', auth, async (req, res) => {
   const appointment = await Appointment.findByPk(req.params.id);
