@@ -43,11 +43,11 @@ export default function AdminPanel() {
       gradient: "from-[#3D9DA4] to-[#3F89A9]"
     },
     {
-      title: "User Management",
+      title: "Patient Management",
       description: "Manage patient accounts",
       icon: "👥",
       buttonText: "Manage Users",
-      path: "/users-dashboard",
+      path: "/patient-dashboard",
       gradient: "from-[#003554] to-[#13315C]"
     },
     {
@@ -57,14 +57,6 @@ export default function AdminPanel() {
       buttonText: "Manage Inventory",
       path: "/inventory",
       gradient: "from-[#3D9DA4] to-[#3F89A9]"
-    },
-    {
-      title: "Appointment Management",
-      description: "View and manage all patient appointments",
-      icon: "📅",
-      buttonText: "View Appointments",
-      path: "/appointments-dashboard",
-      gradient: "from-[#003554] to-[#13315C]"
     },
   ];
 

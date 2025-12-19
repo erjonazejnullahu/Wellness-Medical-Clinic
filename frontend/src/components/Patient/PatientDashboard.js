@@ -1,284 +1,250 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { FaUserDoctor } from "react-icons/fa6";
-import { getPatientAppointments } from '../../api/patientAppointments';
+import React, { useState, useEffect } from 'react';
+import { getAllPatients, deletePatient } from '../../api/patients';
 import Navbar from '../../pages/Navbar';
 import Footer from '../../pages/Footer';
+import { Link } from 'react-router-dom';
 
-export default function PatientAppointments() {
-  const [appointments, setAppointments] = useState([]);
-  const [error, setError] = useState('');
+export default function PatientDashboard() {
+  const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('ALL');
-  const navigate = useNavigate();
-
+  const [error, setError] = useState('');
+  
   const token = localStorage.getItem('token');
-  const role = localStorage.getItem('role');
 
-  useEffect(() => {
-    if (!token) {
-      navigate('/login');
-      return;
-    }
-
-    if (role !== 'PATIENT') {
-      navigate('/');
-      return;
-    }
-
-    load();
-  }, []);
-
-  async function load() {
-    setLoading(true);
+  const loadPatients = async () => {
     try {
-      const data = await getPatientAppointments(token);
-
-      if (data.message) {
-        setError(data.message);
+      setLoading(true);
+      const data = await getAllPatients(token);
+      if (Array.isArray(data)) {
+        setPatients(data);
       } else {
-        setAppointments(data);
+        setPatients([]);
+        setError('No patient data found');
       }
     } catch (err) {
-      setError('Failed to load appointments');
+      setError('Failed to load patients');
     } finally {
       setLoading(false);
     }
-  }
+  };
 
-  const filteredAppointments = appointments.filter(apt => {
-    if (filter === 'ALL') return true;
-    return apt.status === filter;
-  });
-
-  const statusColor = (status) => {
-    switch (status) {
-      case 'PENDING': return 'bg-yellow-50 text-yellow-700 border-yellow-200';
-      case 'CONFIRMED': return 'bg-blue-50 text-blue-700 border-blue-200';
-      case 'COMPLETED': return 'bg-green-50 text-green-700 border-green-200';
-      case 'CANCELLED': return 'bg-red-50 text-red-700 border-red-200';
-      default: return 'bg-gray-50 text-gray-700 border-gray-200';
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this patient?')) return;
+    
+    try {
+      const result = await deletePatient(id, token);
+      if (result.message) {
+        loadPatients();
+      }
+    } catch (err) {
+      alert('Failed to delete patient');
     }
   };
 
-  const statusIcon = (status) => {
-    switch (status) {
-      case 'PENDING': return '⏳';
-      case 'CONFIRMED': return '✅';
-      case 'COMPLETED': return '🏁';
-      case 'CANCELLED': return '❌';
-      default: return '📅';
-    }
-  };
-
-  const formatDate = (dateString) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      weekday: 'long',
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric'
-    });
-  };
-
-  const scrollToSection = (sectionId) => {
+   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
-    if (element) element.scrollIntoView({ behavior: 'smooth' });
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
   };
+
+  useEffect(() => {
+    loadPatients();
+  }, []);
+
+  if (loading) return (
+    <div className="min-h-screen bg-gradient-to-b from-white to-[#99C5FF]/20 p-8">
+      <p className="text-[#13315C]">Loading patients...</p>
+    </div>
+  );
+  
+  if (error) return (
+    <div className="min-h-screen bg-gradient-to-b from-white to-[#99C5FF]/20 p-8">
+      <p className="text-red-600">{error}</p>
+    </div>
+  );
 
   return (
     <>
       <Navbar scrollToSection={scrollToSection} />
-      
-      <div className="min-h-screen bg-gradient-to-b from-white to-[#99C5FF]/10">
-        <div className="container mx-auto px-4 py-12">
-          {/* Header */}
-          <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold text-[#13315C] mb-4">
-              My Appointments
-            </h1>
-            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-              View and manage all your scheduled medical appointments in one place
+    <div className="min-h-screen bg-gradient-to-b from-white to-[#99C5FF]/20">
+      {/* Hero Section */}
+      <section className="bg-gradient-to-r from-[#3F89A9] to-[#3F89A9] py-12">
+        <div className="container mx-auto px-6">
+          <div className="text-center text-white">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">Patient Management Dashboard</h1>
+            <p className="text-xl max-w-2xl mx-auto mb-8">
+              Manage all patient records efficiently. View, edit, and organize patient information in one place.
             </p>
-          </div>
-
-          {/* Filter Tabs */}
-          <div className="mb-8">
-            <div className="flex flex-wrap gap-2 mb-6">
-              {['ALL', 'PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED'].map((status) => (
-                <button
-                  key={status}
-                  onClick={() => setFilter(status)}
-                  className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-200 ${
-                    filter === status
-                      ? 'bg-gradient-to-r from-[#3D9DA4] to-[#3F89A9] text-white shadow-md'
-                      : 'bg-white text-gray-700 border border-gray-200 hover:border-[#3D9DA4] hover:text-[#003554]'
-                  }`}
-                >
-                  {status.charAt(0) + status.slice(1).toLowerCase()}
-                </button>
-              ))}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                to="/register"
+                className="px-6 py-3 bg-gradient-to-r from-[#024959] to-[#024959] text-white font-semibold rounded-lg hover:shadow-xl transition-shadow"
+              >
+                Add New Patient
+              </Link>
             </div>
           </div>
+        </div>
+      </section>
 
-          {/* Error Message */}
-          {error && (
-            <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-xl">
-              <div className="flex items-center">
-                <div className="text-red-500 mr-3">⚠️</div>
-                <p className="text-red-700">{error}</p>
-              </div>
+      {/* Stats Section */}
+      <div className="container mx-auto px-6 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div className="bg-white rounded-xl shadow-lg p-6 text-center">
+            <div className="text-blue-600 font-bold text-3xl">{patients.length}</div>
+            <div className="text-gray-600">Total Patients</div>
+          </div>
+          <div className="bg-white rounded-xl shadow-lg p-6 text-center">
+            <div className="text-green-600 font-bold text-3xl">
+              {patients.filter(p => p.gender?.toLowerCase() === 'male').length}
             </div>
-          )}
-
-          {/* Appointments Grid */}
-          {loading ? (
-            <div className="text-center py-20">
-              <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#3D9DA4]"></div>
-              <p className="mt-4 text-gray-600">Loading your appointments...</p>
+            <div className="text-gray-600">Male Patients</div>
+          </div>
+          <div className="bg-white rounded-xl shadow-lg p-6 text-center">
+            <div className="text-pink-600 font-bold text-3xl">
+              {patients.filter(p => p.gender?.toLowerCase() === 'female').length}
             </div>
-          ) : filteredAppointments.length === 0 ? (
-            <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
-              <div className="text-6xl mb-6">📅</div>
-              <h3 className="text-2xl font-semibold text-gray-700 mb-3">
-                {filter === 'ALL' ? 'No appointments yet' : 'No appointments found'}
-              </h3>
-              <p className="text-gray-500 mb-8 max-w-md mx-auto">
-                {filter === 'ALL'
-                  ? "You haven't booked any appointments yet. Schedule your first appointment to get started."
-                  : `You don't have any ${filter.toLowerCase()} appointments.`}
-              </p>
-              {filter === 'ALL' && (
-                <button
-                  onClick={() => navigate('/book-appointment')}
-                  className="px-8 py-3 bg-gradient-to-r from-[#3D9DA4] to-[#3F89A9] text-white font-semibold rounded-lg hover:shadow-lg transition-shadow"
-                >
-                  Book Your First Appointment
-                </button>
-              )}
+            <div className="text-gray-600">Female Patients</div>
+          </div>
+          <div className="bg-white rounded-xl shadow-lg p-6 text-center">
+            <div className="text-purple-600 font-bold text-3xl">
+              {patients.filter(p => p.insurance_info).length}
             </div>
-          ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {filteredAppointments.map((appointment) => (
-                <div
-                  key={appointment.id}
-                  className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-300"
-                >
-                  {/* Appointment Header */}
-                  <div className="bg-gradient-to-r from-[#003554]/5 to-[#13315C]/5 p-6 border-b">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <div className="flex items-center gap-3 mb-2">
-                          <FaUserDoctor className="text-2xl text-[#3D9DA4]" />
-                          <div>
-                            <h3 className="text-xl font-bold text-[#13315C]">
-                              Dr. {appointment.doctor_name || `Doctor #${appointment.doctor_user_id}`}
-                            </h3>
-                            <p className="text-gray-600 text-sm">Medical Appointment</p>
-                          </div>
-                        </div>
-                      </div>
-                      <span className={`px-4 py-2 rounded-full text-sm font-semibold ${statusColor(appointment.status)}`}>
-                        {statusIcon(appointment.status)} {appointment.status}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Appointment Details */}
-                  <div className="p-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-4">
-                        <div>
-                          <p className="text-gray-500 text-sm font-medium mb-1">Date & Time</p>
-                          <div className="flex items-center gap-2">
-                            <span className="text-gray-400">📅</span>
-                            <p className="font-semibold text-gray-800">
-                              {formatDate(appointment.appointment_date)}
-                            </p>
-                          </div>
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className="text-gray-400">⏰</span>
-                            <p className="font-semibold text-gray-800">{appointment.appointment_time}</p>
-                          </div>
-                        </div>
-
-                        <div>
-                          <p className="text-gray-500 text-sm font-medium mb-1">Reason</p>
-                          <p className="text-gray-800 font-medium">
-                            {appointment.reason || 'General Consultation'}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="space-y-4">
-                        <div>
-                          <p className="text-gray-500 text-sm font-medium text-right mb-1">Booked On</p>
-                          <p className="text-gray-700 font-medium text-right">
-                            {new Date(appointment.createdAt || Date.now()).toLocaleDateString('en-US', {
-                              month: 'short',
-                              day: 'numeric',
-                              year: 'numeric'
-                            })}
-                          </p>
-                        </div>
-                        {/* This empty div maintains the layout */}
-                        <div></div>
-                      </div>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="mt-8 pt-6 border-t border-gray-100 flex justify-end">
-                      {appointment.status === 'PENDING' && (
-                        <button className="px-5 py-2.5 text-sm font-medium text-[#003554] bg-[#003554]/10 rounded-lg hover:bg-[#003554]/20 transition-colors">
-                          View Details
-                        </button>
-                      )}
-                      {appointment.status === 'CONFIRMED' && (
-                        <button className="px-5 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-[#3D9DA4] to-[#3F89A9] rounded-lg hover:opacity-90 transition-opacity">
-                          Join Appointment
-                        </button>
-                      )}
-                      {appointment.status === 'COMPLETED' && (
-                        <button className="px-5 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
-                          View Summary
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Footer Stats */}
-          {filteredAppointments.length > 0 && (
-            <div className="mt-10 text-center">
-              <p className="text-gray-500">
-                Showing <span className="font-semibold text-[#003554]">{filteredAppointments.length}</span> of{' '}
-                <span className="font-semibold">{appointments.length}</span> appointments
-                {filter !== 'ALL' && (
-                  <span className="text-[#3D9DA4]"> (filtered by {filter.toLowerCase()})</span>
-                )}
-              </p>
-            </div>
-          )}
-
-          {/* Quick Action */}
-          <div className="mt-12 bg-gradient-to-r from-[#003554]/5 to-[#13315C]/5 rounded-2xl p-8 text-center">
-            <h3 className="text-2xl font-bold text-[#13315C] mb-3">Need a new appointment?</h3>
-            <p className="text-gray-600 mb-6">Schedule with one of our expert doctors today</p>
-            <button
-              onClick={() => navigate('/book-appointment')}
-              className="px-8 py-3 bg-gradient-to-r from-[#3D9DA4] to-[#3F89A9] text-white font-semibold rounded-lg hover:shadow-lg transition-shadow inline-flex items-center gap-2"
-            >
-              <span>+</span> Book New Appointment
-            </button>
+            <div className="text-gray-600">With Insurance</div>
           </div>
         </div>
       </div>
 
-      <Footer scrollToSection={scrollToSection} />
-    </>
+      {/* Main Content */}
+      <div className="container mx-auto px-6 py-8">
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-3xl font-bold text-[#13315C]">All Patients ({patients.length})</h2>
+          <button
+            onClick={loadPatients}
+            className="px-5 py-2.5 bg-[#3D9DA4] text-white font-semibold rounded-lg hover:bg-[#2C8C94] transition-colors flex items-center gap-2"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            Refresh
+          </button>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+          {patients.length === 0 ? (
+            <div className="p-12 text-center">
+              <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p className="text-gray-500 text-lg mb-4">No patient records found</p>
+              <Link
+                to="/register"
+                className="px-4 py-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-colors"
+              >
+                Add First Patient
+              </Link>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      ID
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Name
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Date of Birth
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Gender
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Phone
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Insurance
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {patients.map((patient) => (
+                    <tr key={patient.id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        #{patient.id}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="font-medium text-gray-900">
+                          {patient.first_name} {patient.last_name}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          User ID: {patient.user_id}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {patient.date_of_birth ? new Date(patient.date_of_birth).toLocaleDateString() : 'N/A'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                          patient.gender?.toLowerCase() === 'male' 
+                            ? 'bg-blue-100 text-blue-800' 
+                            : patient.gender?.toLowerCase() === 'female'
+                            ? 'bg-pink-100 text-pink-800'
+                            : 'bg-gray-100 text-gray-800'
+                        }`}>
+                          {patient.gender || 'N/A'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {patient.phone || 'N/A'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {patient.insurance_info ? (
+                          <span className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {patient.insurance_info}
+                          </span>
+                        ) : (
+                          <span className="text-gray-400">No insurance</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div className="flex gap-2">
+                          <Link
+                            to={`/edit-patient/${patient.id}`}
+                            className="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm flex items-center gap-1"
+                          >
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                            Edit
+                          </Link>
+                          <button
+                            onClick={() => handleDelete(patient.id)}
+                            className="px-3 py-1.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm flex items-center gap-1"
+                          >
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+    <Footer scrollToSection={scrollToSection} />
+     </>
   );
 }

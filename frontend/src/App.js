@@ -13,6 +13,9 @@ import AdminPanel from './pages/AdminPanel';
 import Inventory from './pages/Inventory';
 import DoctorsDashboard from './pages/DoctorsDashboard';
 import MedicalRecordPage from './components/MedicalRecord/MedicalRecordPage';
+import PatientDashboard from './components/Patient/PatientDashboard';
+import EditPatient from './components/Patient/EditPatient';
+
 
 function App() {
 
@@ -51,9 +54,22 @@ function App() {
             </PrivateRoute>
           }
         />
-
-
-
+        <Route
+          path="/edit-patient/:id"
+          element={
+            <PrivateRoute>
+              <EditPatient />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/patient-dashboard"
+          element={
+            <PrivateRoute>
+              <PatientDashboard />
+            </PrivateRoute>
+          }
+        />
         <Route
           path="/profile"
           element={
