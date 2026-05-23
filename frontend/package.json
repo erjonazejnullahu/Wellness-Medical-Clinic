@@ -18,8 +18,10 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "test": "cypress open",
+    "eject": "react-scripts eject",
+    "test:run": "cypress run",
+    "test:report": "cypress run --reporter mochawesome"
   },
   "eslintConfig": {
     "extends": [
@@ -41,6 +43,9 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.22",
+    "mochawesome": "^7.1.4",
+    "mochawesome-merge": "^5.1.1",
+    "mochawesome-report-generator": "^6.3.2",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.17"
   }

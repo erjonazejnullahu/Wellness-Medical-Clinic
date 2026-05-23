@@ -1,0 +1,125 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 2,
+    "passes": 2,
+    "pending": 0,
+    "failures": 0,
+    "start": "2026-05-23T16:05:31.463Z",
+    "end": "2026-05-23T16:05:34.808Z",
+    "duration": 3345,
+    "testsRegistered": 2,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "1ddcaaf7-c1b4-41b6-bba3-67b649ff0734",
+      "title": "",
+      "fullFile": "cypress\\e2e\\03_admin_panel.cy.js",
+      "file": "cypress\\e2e\\03_admin_panel.cy.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "d9d08113-9f50-462c-a081-5451e5908e12",
+          "title": "TC-AUTO-05: Admin Panel Access Control",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "TC-AUTO-05a: Admin user can access /adminpanel",
+              "fullTitle": "TC-AUTO-05: Admin Panel Access Control TC-AUTO-05a: Admin user can access /adminpanel",
+              "timedOut": null,
+              "duration": 2264,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.loginAs('admin');\ncy.visit('/adminpanel');\n// Admin Panel heading must be visible\ncy.contains('h1', 'Admin Panel').should('be.visible');\n// The three management cards must be present\ncy.contains('Doctor Management').should('be.visible');\ncy.contains('Patient Management').should('be.visible');\ncy.contains('Pharmacy / Inventory').should('be.visible');",
+              "err": {},
+              "uuid": "b5a4836c-8d4f-4890-acc3-d622011c8a71",
+              "parentUUID": "d9d08113-9f50-462c-a081-5451e5908e12",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "TC-AUTO-05b: Patient role cannot access /adminpanel and gets redirected",
+              "fullTitle": "TC-AUTO-05: Admin Panel Access Control TC-AUTO-05b: Patient role cannot access /adminpanel and gets redirected",
+              "timedOut": null,
+              "duration": 1043,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.loginAs('patient');\ncy.visit('/adminpanel');\n// AdminPanel.js redirects non-admins to '/'\ncy.url().should('eq', Cypress.config().baseUrl + '/');\n// Admin Panel heading must NOT be on screen\ncy.contains('h1', 'Admin Panel').should('not.exist');",
+              "err": {},
+              "uuid": "e98267dd-43da-42e1-a2d4-f53da2c9ff3f",
+              "parentUUID": "d9d08113-9f50-462c-a081-5451e5908e12",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "b5a4836c-8d4f-4890-acc3-d622011c8a71",
+            "e98267dd-43da-42e1-a2d4-f53da2c9ff3f"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 3307,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "7.2.0"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": true,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.4"
+    },
+    "marge": {
+      "options": {
+        "reportDir": "cypress/reports",
+        "overwrite": false,
+        "html": true,
+        "json": true,
+        "reportTitle": "Medical Clinic - Automated Testing Report"
+      },
+      "version": "6.3.2"
+    }
+  }
+}

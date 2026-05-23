@@ -1,0 +1,106 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 1,
+    "passes": 1,
+    "pending": 0,
+    "failures": 0,
+    "start": "2026-05-23T16:05:46.606Z",
+    "end": "2026-05-23T16:05:52.149Z",
+    "duration": 5543,
+    "testsRegistered": 1,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "615bb96c-2c58-4eed-ae5b-6fd492e121e8",
+      "title": "",
+      "fullFile": "cypress\\e2e\\05_book_appointment.cy.js",
+      "file": "cypress\\e2e\\05_book_appointment.cy.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "da141534-7c4e-4bc1-b4fa-b32a0132ed39",
+          "title": "TC-AUTO-08: Patient Books Appointment",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "TC-AUTO-08a: Patient fills form, selects doctor and books appointment",
+              "fullTitle": "TC-AUTO-08: Patient Books Appointment TC-AUTO-08a: Patient fills form, selects doctor and books appointment",
+              "timedOut": null,
+              "duration": 5482,
+              "state": "passed",
+              "speed": "medium",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.intercept('GET', '**/api/doctors/availability*').as('getDoctors');\ncy.visit('/book-appointment');\n// Dynamic future date\nconst futureDate = new Date();\nfutureDate.setDate(futureDate.getDate() + 7);\nconst formattedDate = futureDate.toISOString().split('T')[0];\ncy.get('input[type=\"date\"]').type(formattedDate);\ncy.get('input[type=\"time\"]').type('10:00');\n// Wait for API\ncy.wait('@getDoctors');\n// Select real available doctor\ncy.get('select option', {\n  timeout: 10000\n}).should('exist').then($options => {\n  const options = [...$options];\n  const validDoctors = options.filter(option => option.value !== '' && !option.disabled && !option.text.includes('Choose a doctor') && !option.text.includes('No doctors available') && !option.text.includes('Loading'));\n  expect(validDoctors.length).to.be.greaterThan(0);\n  cy.get('select').select(validDoctors[0].value);\n});\n// Fill form\ncy.get('input[placeholder*=\"General checkup\"]').type('General checkup visit');\ncy.get('textarea').type('No additional notes.');\n// Submit\ncy.contains('button', 'Request Appointment').click();\n// Verify success\ncy.contains('successfully', {\n  timeout: 10000\n}).should('be.visible');",
+              "err": {},
+              "uuid": "5dcbd8f3-3c3b-4947-a233-5d8b3d30492f",
+              "parentUUID": "da141534-7c4e-4bc1-b4fa-b32a0132ed39",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "5dcbd8f3-3c3b-4947-a233-5d8b3d30492f"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 5482,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "7.2.0"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": true,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.4"
+    },
+    "marge": {
+      "options": {
+        "reportDir": "cypress/reports",
+        "overwrite": false,
+        "html": true,
+        "json": true,
+        "reportTitle": "Medical Clinic - Automated Testing Report"
+      },
+      "version": "6.3.2"
+    }
+  }
+}

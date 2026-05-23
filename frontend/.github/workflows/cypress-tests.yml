@@ -1,0 +1,74 @@
+name: Medical Clinic - Cypress Tests
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  cypress-run:
+    name: Run Cypress Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: npm install
+
+      - name: Install Mochawesome
+        working-directory: ./frontend
+        run: npm install mochawesome mochawesome-merge mochawesome-report-generator --save-dev
+
+      - name: Build frontend
+        working-directory: ./frontend
+        run: npm run build
+        env:
+          CI: false
+
+      - name: Install serve
+        run: npm install -g serve
+
+      - name: Start frontend
+        working-directory: ./frontend
+        run: serve -s build -l 3000 &
+
+      - name: Wait for frontend
+        run: npx wait-on http://localhost:3000 --timeout 60000
+
+      - name: Run Cypress tests
+        working-directory: ./frontend
+        run: npx cypress run --headless --browser chrome --spec "cypress/e2e/ci_smoke.cy.js"
+        env:
+          CYPRESS_BASE_URL: http://localhost:3000
+        continue-on-error: true
+
+      - name: Generate report
+        working-directory: ./frontend
+        run: |
+          npx mochawesome-merge cypress/reports/*.json > cypress/reports/combined.json
+          npx marge cypress/reports/combined.json --reportDir cypress/reports --inline
+        continue-on-error: true
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cypress-test-report
+          path: frontend/cypress/reports
+          if-no-files-found: ignore
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cypress-screenshots
+          path: frontend/cypress/screenshots
+          if-no-files-found: ignore

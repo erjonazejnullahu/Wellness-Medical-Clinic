@@ -1,0 +1,125 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 2,
+    "passes": 2,
+    "pending": 0,
+    "failures": 0,
+    "start": "2026-05-23T16:06:00.187Z",
+    "end": "2026-05-23T16:06:04.282Z",
+    "duration": 4095,
+    "testsRegistered": 2,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "c8032d8d-fd0d-4a56-a4c6-da3143aeec5d",
+      "title": "",
+      "fullFile": "cypress\\e2e\\07_logout.cy.js",
+      "file": "cypress\\e2e\\07_logout.cy.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "ce4c005e-4916-484f-a7c2-fb96d0600d2a",
+          "title": "TC-AUTO-10: Logout Functionality",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "TC-AUTO-10a: User logs out successfully",
+              "fullTitle": "TC-AUTO-10: Logout Functionality TC-AUTO-10a: User logs out successfully",
+              "timedOut": null,
+              "duration": 2883,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.loginAs('patient');\ncy.visit('/');\ncy.contains('Logout').click();\n// Verify token removed\ncy.window().then(win => {\n  expect(win.localStorage.getItem('token')).to.be.null;\n});\n// Verify user sees login option again\ncy.contains(/login|sign in/i).should('be.visible');",
+              "err": {},
+              "uuid": "40a3854b-bd18-4a87-ab82-efeb24781abd",
+              "parentUUID": "ce4c005e-4916-484f-a7c2-fb96d0600d2a",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "TC-AUTO-10b: Logged out user cannot access protected route",
+              "fullTitle": "TC-AUTO-10: Logout Functionality TC-AUTO-10b: Logged out user cannot access protected route",
+              "timedOut": null,
+              "duration": 1153,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.loginAs('patient');\ncy.contains('Logout').click();\ncy.visit('/book-appointment');\n// User should be redirected to login\ncy.url().should('include', '/login');\ncy.contains(/login/i).should('be.visible');",
+              "err": {},
+              "uuid": "1e50f86d-584c-4f63-a541-59a73bc21284",
+              "parentUUID": "ce4c005e-4916-484f-a7c2-fb96d0600d2a",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "40a3854b-bd18-4a87-ab82-efeb24781abd",
+            "1e50f86d-584c-4f63-a541-59a73bc21284"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 4036,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "7.2.0"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": true,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.4"
+    },
+    "marge": {
+      "options": {
+        "reportDir": "cypress/reports",
+        "overwrite": false,
+        "html": true,
+        "json": true,
+        "reportTitle": "Medical Clinic - Automated Testing Report"
+      },
+      "version": "6.3.2"
+    }
+  }
+}

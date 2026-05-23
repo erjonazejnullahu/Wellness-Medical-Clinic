@@ -1,0 +1,17 @@
+{
+  "admin": {
+    "email": "erjona@gmail.com",
+    "password": "Erjona1234",
+    "role": "ADMIN"
+  },
+  "doctor": {
+    "email": "olivia@gmail.com",
+    "password": "Olivia123",
+    "role": "DOCTOR"
+  },
+  "patient": {
+    "email": "test@gmail.com",
+    "password": "Test1234",
+    "role": "PATIENT"
+  }
+}

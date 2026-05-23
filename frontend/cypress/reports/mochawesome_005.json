@@ -1,0 +1,106 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 1,
+    "passes": 1,
+    "pending": 0,
+    "failures": 0,
+    "start": "2026-05-23T16:05:55.526Z",
+    "end": "2026-05-23T16:05:57.115Z",
+    "duration": 1589,
+    "testsRegistered": 1,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "5fba8e2b-b2d9-4fe0-b598-f8bd5146bdee",
+      "title": "",
+      "fullFile": "cypress\\e2e\\06_staff_page.cy.js",
+      "file": "cypress\\e2e\\06_staff_page.cy.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "188e655d-bfe8-4a39-b14a-d3e11262bc51",
+          "title": "TC-AUTO-09: Our Staff Page",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "TC-AUTO-09: Staff page loads and displays doctor list",
+              "fullTitle": "TC-AUTO-09: Our Staff Page TC-AUTO-09: Staff page loads and displays doctor list",
+              "timedOut": null,
+              "duration": 1391,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "// This is a public route — no login needed\ncy.visit('/staff');\n// Page must load successfully\ncy.url().should('include', '/staff');\n// Wait for doctors to load from API (allow up to 10 seconds)\ncy.get('body').should('be.visible');\n// The page should not show an error state\ncy.contains('Error').should('not.exist');",
+              "err": {},
+              "uuid": "377ac4e0-ad42-4e60-a87b-02a2a99e7ea9",
+              "parentUUID": "188e655d-bfe8-4a39-b14a-d3e11262bc51",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "377ac4e0-ad42-4e60-a87b-02a2a99e7ea9"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 1391,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "7.2.0"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": true,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.4"
+    },
+    "marge": {
+      "options": {
+        "reportDir": "cypress/reports",
+        "overwrite": false,
+        "html": true,
+        "json": true,
+        "reportTitle": "Medical Clinic - Automated Testing Report"
+      },
+      "version": "6.3.2"
+    }
+  }
+}
